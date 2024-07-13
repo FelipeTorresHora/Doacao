@@ -1,53 +1,26 @@
 package repository;
 
-
 import model.Doacao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoacaoRepository {
-    private EntityManagerFactory emf;
-    private EntityManager em;
+    private List<Doacao> doacoes = new ArrayList<>();
 
-    public DoacaoRepository() {
-        this.emf = Persistence.createEntityManagerFactory("flood-relief-backend");
-        this.em = emf.createEntityManager();
+    public void save(Doacao doacao) {
+        doacoes.add(doacao);
     }
 
-    public void create(Doacao doacao) {
-        em.getTransaction().begin();
-        em.persist(doacao);
-        em.getTransaction().commit();
-    }
-
-    public Doacao read(int id) {
-        return em.find(Doacao.class, id);
-    }
-
-    public List<Doacao> readAll() {
-        return em.createQuery("SELECT d FROM Doacao d", Doacao.class).getResultList();
-    }
-
-    public void update(Doacao doacao) {
-        em.getTransaction().begin();
-        em.merge(doacao);
-        em.getTransaction().commit();
+    public List<Doacao> findAll() {
+        return doacoes;
     }
 
     public void delete(int id) {
-        em.getTransaction().begin();
-        Doacao doacao = em.find(Doacao.class, id);
-        if (doacao != null) {
-            em.remove(doacao);
-        }
-        em.getTransaction().commit();
+        doacoes.removeIf(d -> d.getId() == id);
     }
 
-    public void close() {
-        em.close();
-        emf.close();
+    public void importFromCsv(String filePath) {
+        // Implementar a lógica para importar doações de um arquivo CSV
     }
 }

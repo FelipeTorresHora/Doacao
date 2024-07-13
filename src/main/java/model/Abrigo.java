@@ -14,7 +14,8 @@ public class Abrigo {
     public Abrigo(){
     }
 
-    public Abrigo(String nome, String endereco, String responsavel, String telefone, String email, int capacidade, int ocupacao) {
+    public Abrigo(int id, String nome, String endereco, String responsavel, String telefone, String email, int capacidade, int ocupacao) {
+        this.id = id;
         this.nome = nome;
         this.endereco = endereco;
         this.responsavel = responsavel;
@@ -25,6 +26,14 @@ public class Abrigo {
     }
 
     public Abrigo(String nome, String endereco, String responsavel, String telefone, String email) {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -86,7 +95,8 @@ public class Abrigo {
     @Override
     public String toString() {
         return "Abrigo{" +
-                "nome='" + nome + '\'' +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
                 ", endereco='" + endereco + '\'' +
                 ", responsavel='" + responsavel + '\'' +
                 ", telefone='" + telefone + '\'' +

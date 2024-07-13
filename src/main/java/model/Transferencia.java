@@ -5,15 +5,15 @@ import java.util.List;
 public class Transferencia {
 
     private int id;
-    private CentroDistribuicao centroOrigem;
-    private CentroDistribuicao centroDestino;
-    private List<Doacao> itensTransferidos;
+    private int origemId;
+    private int destinoId;
+    private String descricaoItens;
 
-    public Transferencia(int id, CentroDistribuicao centroOrigem, CentroDistribuicao centroDestino, List<Doacao> itensTransferidos) {
+    public Transferencia(int id, int origemId, int destinoId, String descricaoItens) {
         this.id = id;
-        this.centroOrigem = centroOrigem;
-        this.centroDestino = centroDestino;
-        this.itensTransferidos = itensTransferidos;
+        this.origemId = origemId;
+        this.destinoId = destinoId;
+        this.descricaoItens = descricaoItens;
     }
 
     public int getId() {
@@ -24,37 +24,37 @@ public class Transferencia {
         this.id = id;
     }
 
-    public CentroDistribuicao getCentroOrigem() {
-        return centroOrigem;
+    public int getOrigemId() {
+        return origemId;
     }
 
-    public void setCentroOrigem(CentroDistribuicao centroOrigem) {
-        this.centroOrigem = centroOrigem;
+    public void setOrigemId(int origemId) {
+        this.origemId = origemId;
     }
 
-    public CentroDistribuicao getCentroDestino() {
-        return centroDestino;
+    public int getDestinoId() {
+        return destinoId;
     }
 
-    public void setCentroDestino(CentroDistribuicao centroDestino) {
-        this.centroDestino = centroDestino;
+    public void setDestinoId(int destinoId) {
+        this.destinoId = destinoId;
     }
 
-    public List<Doacao> getItensTransferidos() {
-        return itensTransferidos;
+    public String getDescricaoItens() {
+        return descricaoItens;
     }
 
-    public void setItensTransferidos(List<Doacao> itensTransferidos) {
-        this.itensTransferidos = itensTransferidos;
+    public void setDescricaoItens(String descricaoItens) {
+        this.descricaoItens = descricaoItens;
     }
 
     @Override
     public String toString() {
         return "Transferencia{" +
                 "id=" + id +
-                ", centroOrigem=" + centroOrigem +
-                ", centroDestino=" + centroDestino +
-                ", itensTransferidos=" + itensTransferidos +
+                ", origemId=" + origemId +
+                ", destinoId=" + destinoId +
+                ", descricaoItens='" + descricaoItens + '\'' +
                 '}';
     }
 }

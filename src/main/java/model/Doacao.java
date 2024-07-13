@@ -20,7 +20,9 @@ public class Doacao {
     public Doacao(){
     }
 
-    public Doacao(String descricao, Tipo tipo, Genero genero, Tamanho tamanho, int quantidade, UnidadeMedida unidadeMedida, String validade, CentroDistribuicao centroDistribuicao) {
+
+    public Doacao(int id, String descricao, Tipo tipo, Genero genero, Tamanho tamanho, int quantidade, UnidadeMedida unidadeMedida, String validade, CentroDistribuicao centroDistribuicao) {
+        this.id = id;
         this.descricao = descricao;
         this.tipo = tipo;
         this.genero = genero;

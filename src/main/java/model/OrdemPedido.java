@@ -5,18 +5,14 @@ import java.util.List;
 public class OrdemPedido {
 
     private int id;
-    private int origemId;
-    private int destinoId;
-    private String descricaoItens;
+    private List<String> itensNecessarios;
 
     public OrdemPedido() {
     }
 
-    public OrdemPedido(int id, int origemId, int destinoId, String descricaoItens) {
+    public OrdemPedido(int id, List<String> itensNecessarios) {
         this.id = id;
-        this.origemId = origemId;
-        this.destinoId = destinoId;
-        this.descricaoItens = descricaoItens;
+        this.itensNecessarios = itensNecessarios;
     }
 
     public int getId() {
@@ -27,37 +23,19 @@ public class OrdemPedido {
         this.id = id;
     }
 
-    public int getOrigemId() {
-        return origemId;
+    public List<String> getItensNecessarios() {
+        return itensNecessarios;
     }
 
-    public void setOrigemId(int origemId) {
-        this.origemId = origemId;
-    }
-
-    public int getDestinoId() {
-        return destinoId;
-    }
-
-    public void setDestinoId(int destinoId) {
-        this.destinoId = destinoId;
-    }
-
-    public String getDescricaoItens() {
-        return descricaoItens;
-    }
-
-    public void setDescricaoItens(String descricaoItens) {
-        this.descricaoItens = descricaoItens;
+    public void setItensNecessarios(List<String> itensNecessarios) {
+        this.itensNecessarios = itensNecessarios;
     }
 
     @Override
     public String toString() {
         return "OrdemPedido{" +
                 "id=" + id +
-                ", origemId=" + origemId +
-                ", destinoId=" + destinoId +
-                ", descricaoItens='" + descricaoItens + '\'' +
+                ", itensNecessarios=" + itensNecessarios +
                 '}';
     }
 }

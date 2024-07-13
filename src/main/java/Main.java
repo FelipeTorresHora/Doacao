@@ -61,9 +61,9 @@ public class Main {
                 case 9:
                     listarOrdemPedidos();
                     break;
-                case 10:
-                    adicionarTransferencia();
-                    break;
+//                case 10:
+//                    adicionarTransferencia();
+//                    break;
                 case 11:
                     listarTransferencias();
                     break;
@@ -133,20 +133,32 @@ public class Main {
 
     private static void criarDoacao() {
         System.out.println("\n--- Criar Doação ---");
-        System.out.print("Tipo (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
+        System.out.print("Tipo: ");
         Tipo tipo = Tipo.valueOf(scanner.nextLine().toUpperCase());
         System.out.print("Descrição: ");
         String descricao = scanner.nextLine();
-        System.out.print("Gênero (MASCULINO, FEMININO): ");
-        Genero genero = Genero.valueOf(scanner.nextLine().toUpperCase());
-        System.out.print("Tamanho (INFANTIL, PP, P, M, G, GG): ");
-        Tamanho tamanho = Tamanho.valueOf(scanner.nextLine().toUpperCase());
-        System.out.print("Unidade de Medida (QUILO, GRAMAS, LITRO): ");
-        UnidadeMedida unidadeMedida = UnidadeMedida.valueOf(scanner.nextLine().toUpperCase());
         System.out.print("Quantidade: ");
         int quantidade = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        System.out.print("Validade: ");
+        scanner.nextLine();
+        UnidadeMedida unidadeMedida = null;
+        if (tipo != Tipo.ROUPA) {
+            System.out.print("Unidade de Medida: ");
+            unidadeMedida = UnidadeMedida.valueOf(scanner.nextLine().toUpperCase());
+        }
+        Genero genero = null;
+        if (tipo == Tipo.ROUPA) {
+            System.out.print("Gênero (MASCULINO, FEMININO): ");
+            genero = Genero.valueOf(scanner.nextLine().toUpperCase());
+        }
+        Tamanho tamanho = null;
+        if (tipo == Tipo.ROUPA) {
+            System.out.print("Tamanho (INFANTIL, PP, P, M, G, GG): ");
+            tamanho = Tamanho.valueOf(scanner.nextLine().toUpperCase());
+        }
+        System.out.print("ID do Centro de Distribuição: ");
+        int centroId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Data de Validade (YYYY-MM-DD): ");
         String validade = scanner.nextLine();
 
         Doacao doacao = new Doacao();
@@ -182,7 +194,7 @@ public class Main {
         System.out.println("\n--- Adicionar Ordem de Pedido ---");
         System.out.print("ID do Abrigo: ");
         int abrigoId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        scanner.nextLine();
         System.out.print("Itens Necessários (separados por vírgula): ");
         String itens = scanner.nextLine();
         List<String> itensNecessarios = List.of(itens.split(","));
@@ -201,24 +213,24 @@ public class Main {
         }
     }
 
-    private static void adicionarTransferencia() {
-        System.out.println("\n--- Adicionar Transferência ---");
-        System.out.print("ID de Origem: ");
-        int origemId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        System.out.print("ID de Destino: ");
-        int destinoId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        System.out.print("Descrição dos Itens: ");
-        String descricaoItens = scanner.nextLine();
-
-        Transferencia transferencia = new Transferencia();
-        transferencia.setOrigemId(origemId);
-        transferencia.setDestinoId(destinoId);
-        transferencia.setDescricaoItens(descricaoItens);
-        transferenciaRepository.save(transferencia);
-        System.out.println("Transferência adicionada com sucesso!");
-    }
+//    private static void adicionarTransferencia() {
+//        System.out.println("\n--- Adicionar Transferência ---");
+//        System.out.print("ID de Origem: ");
+//        int origemId = scanner.nextInt();
+//        scanner.nextLine();  // Consume newline
+//        System.out.print("ID de Destino: ");
+//        int destinoId = scanner.nextInt();
+//        scanner.nextLine();  // Consume newline
+//        System.out.print("Descrição dos Itens: ");
+//        String descricaoItens = scanner.nextLine();
+//
+//        Transferencia transferencia = new Transferencia();
+//        transferencia.setOrigemId(origemId);
+//        transferencia.setDestinoId(destinoId);
+//        transferencia.setDescricaoItens(descricaoItens);
+//        transferenciaRepository.save(transferencia);
+//        System.out.println("Transferência adicionada com sucesso!");
+//    }
 
     private static void listarTransferencias() {
         System.out.println("\n--- Listar Transferências ---");

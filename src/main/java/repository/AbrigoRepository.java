@@ -2,36 +2,35 @@ package repository;
 
 import model.Abrigo;
 import model.Doacao;
+import model.OrdemPedido;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AbrigoRepository {
-
-    private List<Abrigo> abrigos = new ArrayList<>();
+    private Map<Integer, Abrigo> abrigos = new HashMap<>();
+    private int currentId = 1;
 
     public void save(Abrigo abrigo) {
-        abrigos.add(abrigo);
+        abrigo.setId(currentId++);
+        abrigos.put(abrigo.getId(), abrigo);
     }
 
     public List<Abrigo> findAll() {
-        return abrigos;
+        return new ArrayList<>(abrigos.values());
+    }
+
+    public Abrigo findById(int id) {
+        return abrigos.get(id);
     }
 
     public void delete(int id) {
-        abrigos.removeIf(a -> a.getId() == id);
+        abrigos.remove(id);
     }
 
-    public boolean podeAdicionarDoacao(Abrigo abrigo, Doacao doacao) {
-        switch (doacao.getTipo()) {
-            case ROUPA:
-                return abrigo.getCapacidadeRoupa() + doacao.getQuantidade() <= 200;
-            case PRODUTO_HIGIENE:
-                return abrigo.getCapacidadeHigiene() + doacao.getQuantidade() <= 200;
-            case ALIMENTO:
-                return abrigo.getCapacidadeAlimento() + doacao.getQuantidade() <= 200;
-            default:
-                return false;
-        }
+    public void adicionarOrdemPedido(Abrigo abrigo, OrdemPedido ordemPedido) {
+        abrigo.adicionarOrdemPedido(ordemPedido);
     }
 }

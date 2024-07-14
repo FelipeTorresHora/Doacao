@@ -1,52 +1,31 @@
 package model;
 
-public class Abrigo {
+import java.util.ArrayList;
+import java.util.List;
 
+
+public class Abrigo {
     private int id;
     private String nome;
     private String endereco;
     private String responsavel;
     private String telefone;
     private String email;
-    private int capacidadeRoupa;
-    private int capacidadeHigiene;
-    private int capacidadeAlimento;
+    private List<OrdemPedido> ordensPedido;
+    private int capacidadeRoupa = 200;
+    private int capacidadeProdutoHigiene = 200;
+    private int capacidadeAlimento = 200;
 
-    public Abrigo(){
-    }
-
-    public Abrigo(int id, String nome, String endereco, String responsavel, String telefone, String email, int capacidade, int ocupacao) {
-        this.id = id;
+    public Abrigo(String nome, String endereco, String responsavel, String telefone, String email) {
         this.nome = nome;
         this.endereco = endereco;
         this.responsavel = responsavel;
         this.telefone = telefone;
         this.email = email;
+        this.ordensPedido = new ArrayList<>();
     }
 
-    public int getCapacidadeRoupa() {
-        return capacidadeRoupa;
-    }
-
-    public void setCapacidadeRoupa(int capacidadeRoupa) {
-        this.capacidadeRoupa = capacidadeRoupa;
-    }
-
-    public int getCapacidadeHigiene() {
-        return capacidadeHigiene;
-    }
-
-    public void setCapacidadeHigiene(int capacidadeHigiene) {
-        this.capacidadeHigiene = capacidadeHigiene;
-    }
-
-    public int getCapacidadeAlimento() {
-        return capacidadeAlimento;
-    }
-
-    public void setCapacidadeAlimento(int capacidadeAlimento) {
-        this.capacidadeAlimento = capacidadeAlimento;
-    }
+    // Getters e setters
 
     public int getId() {
         return id;
@@ -60,40 +39,82 @@ public class Abrigo {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getEndereco() {
         return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
     }
 
     public String getResponsavel() {
         return responsavel;
     }
 
-    public void setResponsavel(String responsavel) {
-        this.responsavel = responsavel;
-    }
-
     public String getTelefone() {
         return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public List<OrdemPedido> getOrdensPedido() {
+        return ordensPedido;
+    }
+
+    public void adicionarOrdemPedido(OrdemPedido ordemPedido) {
+        this.ordensPedido.add(ordemPedido);
+    }
+
+    public boolean podeAdicionarDoacao(Doacao doacao) {
+        switch (doacao.getTipo()) {
+            case ROUPA:
+                return capacidadeRoupa >= doacao.getQuantidade();
+            case PRODUTO_HIGIENE:
+                return capacidadeProdutoHigiene >= doacao.getQuantidade();
+            case ALIMENTO:
+                return capacidadeAlimento >= doacao.getQuantidade();
+            default:
+                return false;
+        }
+    }
+
+    public void adicionarDoacao(Doacao doacao) {
+        switch (doacao.getTipo()) {
+            case ROUPA:
+                capacidadeRoupa -= doacao.getQuantidade();
+                break;
+            case PRODUTO_HIGIENE:
+                capacidadeProdutoHigiene -= doacao.getQuantidade();
+                break;
+            case ALIMENTO:
+                capacidadeAlimento -= doacao.getQuantidade();
+                break;
+        }
+    }
+
+    public boolean podeAdicionarPedido(OrdemPedido ordemPedido) {
+        switch (ordemPedido.getTipo()) {
+            case ROUPA:
+                return capacidadeRoupa >= ordemPedido.getQuantidade();
+            case PRODUTO_HIGIENE:
+                return capacidadeProdutoHigiene >= ordemPedido.getQuantidade();
+            case ALIMENTO:
+                return capacidadeAlimento >= ordemPedido.getQuantidade();
+            default:
+                return false;
+        }
+    }
+
+    public void adicionarPedido(OrdemPedido ordemPedido) {
+        switch (ordemPedido.getTipo()) {
+            case ROUPA:
+                capacidadeRoupa -= ordemPedido.getQuantidade();
+                break;
+            case PRODUTO_HIGIENE:
+                capacidadeProdutoHigiene -= ordemPedido.getQuantidade();
+                break;
+            case ALIMENTO:
+                capacidadeAlimento -= ordemPedido.getQuantidade();
+                break;
+        }
     }
 
     @Override
@@ -105,8 +126,9 @@ public class Abrigo {
                 ", responsavel='" + responsavel + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", email='" + email + '\'' +
+                ", ordensPedido=" + ordensPedido +
                 ", capacidadeRoupa=" + capacidadeRoupa +
-                ", capacidadeHigiene=" + capacidadeHigiene +
+                ", capacidadeProdutoHigiene=" + capacidadeProdutoHigiene +
                 ", capacidadeAlimento=" + capacidadeAlimento +
                 '}';
     }

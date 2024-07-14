@@ -91,16 +91,8 @@ public class Main {
         String telefone = scanner.nextLine();
         System.out.print("Email: ");
         String email = scanner.nextLine();
-        System.out.print("Capacidade: ");
-        int capacidade = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
 
-        Abrigo abrigo = new Abrigo();
-        abrigo.setNome(nome);
-        abrigo.setEndereco(endereco);
-        abrigo.setResponsavel(responsavel);
-        abrigo.setTelefone(telefone);
-        abrigo.setEmail(email);
+        Abrigo abrigo = new Abrigo(nome, endereco, responsavel, telefone, email);
         abrigoRepository.save(abrigo);
         System.out.println("Abrigo criado com sucesso!");
     }
@@ -201,43 +193,75 @@ public class Main {
         System.out.println("\n--- Adicionar Ordem de Pedido ---");
         System.out.print("ID do Abrigo: ");
         int abrigoId = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Itens Necessários (separados por vírgula): ");
-        String itens = scanner.nextLine();
-        List<String> itensNecessarios = List.of(itens.split(","));
+        scanner.nextLine();  // Consumir nova linha
 
-        OrdemPedido ordemPedido = new OrdemPedido();
-        ordemPedido.setItensNecessarios(itensNecessarios);
+        Abrigo abrigo = abrigoRepository.findById(abrigoId);
+        if (abrigo == null) {
+            System.out.println("Abrigo não encontrado.");
+            return;
+        }
+
+        System.out.print("Tipo (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
+        Tipo tipo = Tipo.valueOf(scanner.nextLine().toUpperCase());
+        System.out.print("Descrição: ");
+        String descricao = scanner.nextLine();
+
+        System.out.print("Quantidade: ");
+        int quantidade = scanner.nextInt();
+        scanner.nextLine();  // Consumir nova linha
+
+        OrdemPedido ordemPedido = new OrdemPedido(tipo, descricao, quantidade);
+        abrigoRepository.adicionarOrdemPedido(abrigo, ordemPedido);
         ordemPedidoRepository.save(ordemPedido);
-        System.out.println("Ordem de Pedido adicionada com sucesso!");
-    }
 
-    private static void listarOrdemPedidos() {
-        System.out.println("\n--- Listar Ordens de Pedido ---");
-        List<OrdemPedido> ordens = ordemPedidoRepository.findAll();
-        for (OrdemPedido ordem : ordens) {
-            System.out.println(ordem);
+        CentroDistribuicao centroSelecionado = centroDistribuicaoRepository.findCentroComMaiorValor(tipo);
+        if (centroSelecionado == null) {
+            System.out.println("Nenhum centro de distribuição possui o tipo de item solicitado.");
+            return;
+        }
+
+        System.out.println("Centro de Distribuição selecionado: " + centroSelecionado.getNome() + " com " + centroSelecionado.getQuantidadeDisponivel(tipo) + " unidades disponíveis.");
+        System.out.print("Deseja confirmar o envio? (S/N): ");
+        String confirmacao = scanner.nextLine().toUpperCase();
+
+        if (confirmacao.equals("S")) {
+            if (!centroDistribuicaoRepository.podeTransferirParaAbrigo(centroSelecionado, abrigo, ordemPedido)) {
+                System.out.println("Capacidade do abrigo excedida para este tipo de item.");
+                return;
+            }
+
+            centroDistribuicaoRepository.transferirParaAbrigo(centroSelecionado, abrigo, ordemPedido);
+            System.out.println("Pedido enviado com sucesso!");
+        } else {
+            System.out.println("Envio cancelado.");
         }
     }
 
-    private static void adicionarTransferencia() {
-        System.out.println("\n--- Adicionar Transferência ---");
-        System.out.print("ID de Origem: ");
-        int origemId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        System.out.print("ID de Destino: ");
-        int destinoId = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        System.out.print("Descrição dos Itens: ");
-        String descricaoItens = scanner.nextLine();
-
-        Transferencia transferencia = new Transferencia();
-        transferencia.setOrigemId(origemId);
-        transferencia.setDestinoId(destinoId);
-        transferencia.setDescricaoItens(descricaoItens);
-        transferenciaRepository.save(transferencia);
-        System.out.println("Transferência adicionada com sucesso!");
+    private static void listarOrdemPedidos() {
+        List<OrdemPedido> ordensPedido = ordemPedidoRepository.findAll();
+        for (OrdemPedido ordemPedido : ordensPedido) {
+            System.out.println(ordemPedido);
+        }
     }
+
+//    private static void adicionarTransferencia() {
+//        System.out.println("\n--- Adicionar Transferência ---");
+//        System.out.print("ID de Origem: ");
+//        int origemId = scanner.nextInt();
+//        scanner.nextLine();  // Consume newline
+//        System.out.print("ID de Destino: ");
+//        int destinoId = scanner.nextInt();
+//        scanner.nextLine();  // Consume newline
+//        System.out.print("Descrição dos Itens: ");
+//        String descricaoItens = scanner.nextLine();
+//
+//        Transferencia transferencia = new Transferencia();
+//        transferencia.setOrigemId(origemId);
+//        transferencia.setDestinoId(destinoId);
+//        transferencia.setDescricaoItens(descricaoItens);
+//        transferenciaRepository.save(transferencia);
+//        System.out.println("Transferência adicionada com sucesso!");
+//    }
 
     private static void listarTransferencias() {
         System.out.println("\n--- Listar Transferências ---");

@@ -20,9 +20,7 @@ public class Doacao {
     public Doacao(){
     }
 
-
-    public Doacao(int id, String descricao, Tipo tipo, Genero genero, Tamanho tamanho, int quantidade, UnidadeMedida unidadeMedida, String validade, CentroDistribuicao centroDistribuicao) {
-        this.id = id;
+    public Doacao(Tipo tipo, String descricao, Genero genero, Tamanho tamanho, UnidadeMedida unidadeMedida, int quantidade, String validade) {
         this.descricao = descricao;
         this.tipo = tipo;
         this.genero = genero;
@@ -30,7 +28,6 @@ public class Doacao {
         this.quantidade = quantidade;
         this.unidadeMedida = unidadeMedida;
         this.validade = validade;
-        this.centroDistribuicao = centroDistribuicao;
     }
 
     public int getId() {
@@ -118,5 +115,8 @@ public class Doacao {
                 ", validade='" + validade + '\'' +
                 ", centroDistribuicao=" + centroDistribuicao +
                 '}';
+    }
+
+    public void setCentroDistribuicaoId(int centroId) {
     }
 }

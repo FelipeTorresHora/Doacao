@@ -8,8 +8,9 @@ public class Abrigo {
     private String responsavel;
     private String telefone;
     private String email;
-    private int capacidade;
-    private int ocupacao;
+    private int capacidadeRoupa;
+    private int capacidadeHigiene;
+    private int capacidadeAlimento;
 
     public Abrigo(){
     }
@@ -21,11 +22,30 @@ public class Abrigo {
         this.responsavel = responsavel;
         this.telefone = telefone;
         this.email = email;
-        this.capacidade = capacidade;
-        this.ocupacao = ocupacao;
     }
 
-    public Abrigo(String nome, String endereco, String responsavel, String telefone, String email) {
+    public int getCapacidadeRoupa() {
+        return capacidadeRoupa;
+    }
+
+    public void setCapacidadeRoupa(int capacidadeRoupa) {
+        this.capacidadeRoupa = capacidadeRoupa;
+    }
+
+    public int getCapacidadeHigiene() {
+        return capacidadeHigiene;
+    }
+
+    public void setCapacidadeHigiene(int capacidadeHigiene) {
+        this.capacidadeHigiene = capacidadeHigiene;
+    }
+
+    public int getCapacidadeAlimento() {
+        return capacidadeAlimento;
+    }
+
+    public void setCapacidadeAlimento(int capacidadeAlimento) {
+        this.capacidadeAlimento = capacidadeAlimento;
     }
 
     public int getId() {
@@ -76,22 +96,6 @@ public class Abrigo {
         this.email = email;
     }
 
-    public int getCapacidade() {
-        return capacidade;
-    }
-
-    public void setCapacidade(int capacidade) {
-        this.capacidade = capacidade;
-    }
-
-    public int getOcupacao() {
-        return ocupacao;
-    }
-
-    public void setOcupacao(int ocupacao) {
-        this.ocupacao = ocupacao;
-    }
-
     @Override
     public String toString() {
         return "Abrigo{" +
@@ -101,8 +105,9 @@ public class Abrigo {
                 ", responsavel='" + responsavel + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", email='" + email + '\'' +
-                ", capacidade=" + capacidade +
-                ", ocupacao=" + ocupacao +
+                ", capacidadeRoupa=" + capacidadeRoupa +
+                ", capacidadeHigiene=" + capacidadeHigiene +
+                ", capacidadeAlimento=" + capacidadeAlimento +
                 '}';
     }
 }

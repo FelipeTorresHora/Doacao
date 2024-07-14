@@ -101,7 +101,6 @@ public class Main {
         abrigo.setResponsavel(responsavel);
         abrigo.setTelefone(telefone);
         abrigo.setEmail(email);
-        abrigo.setCapacidade(capacidade);
         abrigoRepository.save(abrigo);
         System.out.println("Abrigo criado com sucesso!");
     }
@@ -133,46 +132,54 @@ public class Main {
 
     private static void criarDoacao() {
         System.out.println("\n--- Criar Doação ---");
-        System.out.print("Tipo: ");
+        System.out.print("Tipo (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
         Tipo tipo = Tipo.valueOf(scanner.nextLine().toUpperCase());
         System.out.print("Descrição: ");
         String descricao = scanner.nextLine();
-        System.out.print("Quantidade: ");
-        int quantidade = scanner.nextInt();
-        scanner.nextLine();
-        UnidadeMedida unidadeMedida = null;
-        if (tipo != Tipo.ROUPA) {
-            System.out.print("Unidade de Medida: ");
-            unidadeMedida = UnidadeMedida.valueOf(scanner.nextLine().toUpperCase());
-        }
+
         Genero genero = null;
+        Tamanho tamanho = null;
+        UnidadeMedida unidadeMedida = null;
+        String validade = null;
+
         if (tipo == Tipo.ROUPA) {
             System.out.print("Gênero (MASCULINO, FEMININO): ");
             genero = Genero.valueOf(scanner.nextLine().toUpperCase());
-        }
-        Tamanho tamanho = null;
-        if (tipo == Tipo.ROUPA) {
             System.out.print("Tamanho (INFANTIL, PP, P, M, G, GG): ");
             tamanho = Tamanho.valueOf(scanner.nextLine().toUpperCase());
+        } else if (tipo == Tipo.PRODUTO_HIGIENE || tipo == Tipo.ALIMENTO) {
+            System.out.print("Unidade de Medida (QUILO, GRAMAS, LITRO): ");
+            unidadeMedida = UnidadeMedida.valueOf(scanner.nextLine().toUpperCase());
+            System.out.print("Validade: ");
+            validade = scanner.nextLine();
         }
+
+        System.out.print("Quantidade: ");
+        int quantidade = scanner.nextInt();
+        scanner.nextLine();
+
         System.out.print("ID do Centro de Distribuição: ");
         int centroId = scanner.nextInt();
         scanner.nextLine();
-        System.out.print("Data de Validade (YYYY-MM-DD): ");
-        String validade = scanner.nextLine();
+        CentroDistribuicao centro = centroDistribuicaoRepository.findById(centroId);
 
-        Doacao doacao = new Doacao();
-        doacao.setTipo(tipo);
-        doacao.setDescricao(descricao);
-        doacao.setGenero(genero);
-        doacao.setTamanho(tamanho);
-        doacao.setUnidadeMedida(unidadeMedida);
-        doacao.setQuantidade(quantidade);
-        doacao.setValidade(validade);
+        if (centro == null) {
+            System.out.println("Centro de distribuição não encontrado.");
+            return;
+        }
+
+        Doacao doacao = new Doacao(tipo, descricao, genero, tamanho, unidadeMedida, quantidade, validade);
+        doacao.setCentroDistribuicaoId(centroId);
+
+        if (!centroDistribuicaoRepository.podeAdicionarDoacao(centro, doacao)) {
+            System.out.println("Capacidade do centro de distribuição excedida para este tipo de item.");
+            return;
+        }
+
+        centroDistribuicaoRepository.adicionarDoacao(centro, doacao);
         doacaoRepository.save(doacao);
         System.out.println("Doação criada com sucesso!");
     }
-
     private static void listarDoacoes() {
         System.out.println("\n--- Listar Doações ---");
         List<Doacao> doacoes = doacaoRepository.findAll();
@@ -213,24 +220,24 @@ public class Main {
         }
     }
 
-//    private static void adicionarTransferencia() {
-//        System.out.println("\n--- Adicionar Transferência ---");
-//        System.out.print("ID de Origem: ");
-//        int origemId = scanner.nextInt();
-//        scanner.nextLine();  // Consume newline
-//        System.out.print("ID de Destino: ");
-//        int destinoId = scanner.nextInt();
-//        scanner.nextLine();  // Consume newline
-//        System.out.print("Descrição dos Itens: ");
-//        String descricaoItens = scanner.nextLine();
-//
-//        Transferencia transferencia = new Transferencia();
-//        transferencia.setOrigemId(origemId);
-//        transferencia.setDestinoId(destinoId);
-//        transferencia.setDescricaoItens(descricaoItens);
-//        transferenciaRepository.save(transferencia);
-//        System.out.println("Transferência adicionada com sucesso!");
-//    }
+    private static void adicionarTransferencia() {
+        System.out.println("\n--- Adicionar Transferência ---");
+        System.out.print("ID de Origem: ");
+        int origemId = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+        System.out.print("ID de Destino: ");
+        int destinoId = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+        System.out.print("Descrição dos Itens: ");
+        String descricaoItens = scanner.nextLine();
+
+        Transferencia transferencia = new Transferencia();
+        transferencia.setOrigemId(origemId);
+        transferencia.setDestinoId(destinoId);
+        transferencia.setDescricaoItens(descricaoItens);
+        transferenciaRepository.save(transferencia);
+        System.out.println("Transferência adicionada com sucesso!");
+    }
 
     private static void listarTransferencias() {
         System.out.println("\n--- Listar Transferências ---");

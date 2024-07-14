@@ -61,9 +61,9 @@ public class Main {
                 case 9:
                     listarOrdemPedidos();
                     break;
-//                case 10:
-//                    adicionarTransferencia();
-//                    break;
+                case 10:
+                    adicionarTransferencia();
+                    break;
                 case 11:
                     listarTransferencias();
                     break;
@@ -71,6 +71,7 @@ public class Main {
                     importarDadosCSV();
                     break;
                 case 0:
+                    System.out.println("Finalizando a aplicação!");
                     System.exit(0);
                     break;
                 default:
@@ -244,29 +245,53 @@ public class Main {
         }
     }
 
-//    private static void adicionarTransferencia() {
-//        System.out.println("\n--- Adicionar Transferência ---");
-//        System.out.print("ID de Origem: ");
-//        int origemId = scanner.nextInt();
-//        scanner.nextLine();  // Consume newline
-//        System.out.print("ID de Destino: ");
-//        int destinoId = scanner.nextInt();
-//        scanner.nextLine();  // Consume newline
-//        System.out.print("Descrição dos Itens: ");
-//        String descricaoItens = scanner.nextLine();
-//
-//        Transferencia transferencia = new Transferencia();
-//        transferencia.setOrigemId(origemId);
-//        transferencia.setDestinoId(destinoId);
-//        transferencia.setDescricaoItens(descricaoItens);
-//        transferenciaRepository.save(transferencia);
-//        System.out.println("Transferência adicionada com sucesso!");
-//    }
+    private static void adicionarTransferencia() {
+        System.out.print("Tipo de item (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
+        Tipo tipo = Tipo.valueOf(scanner.nextLine().toUpperCase());
+        System.out.print("Quantidade: ");
+        int quantidade = scanner.nextInt();
+        scanner.nextLine();
+
+        CentroDistribuicao centroOrigem = centroDistribuicaoRepository.findCentroComMaiorValor(tipo);
+        if (centroOrigem == null || centroOrigem.getQuantidadeDisponivel(tipo) < quantidade) {
+            System.out.println("Transferência não pode ser realizada. Quantidade insuficiente no centro de origem.");
+            return;
+        }
+
+        System.out.println("Centro de Origem: " + centroOrigem.getNome());
+        System.out.print("Confirmar transferência? (sim/não): ");
+        String confirmacao = scanner.nextLine();
+        if (!confirmacao.equalsIgnoreCase("sim")) {
+            System.out.println("Transferência cancelada.");
+            return;
+        }
+
+        System.out.print("ID do Centro de Destino: ");
+        int centroDestinoId = scanner.nextInt();
+        scanner.nextLine();
+
+        CentroDistribuicao centroDestino = centroDistribuicaoRepository.findById(centroDestinoId);
+        if (centroDestino == null) {
+            System.out.println("Centro de destino não encontrado.");
+            return;
+        }
+
+        if (centroDestino.getQuantidadeDisponivel(tipo) + quantidade > 1000) {
+            System.out.println("Transferência não pode ser realizada. Quantidade excede a capacidade do centro de destino.");
+            return;
+        }
+
+        centroOrigem.removerItens(tipo, quantidade);
+        centroDestino.adicionarItens(tipo, quantidade);
+        Transferencia transferencia = new Transferencia(tipo, quantidade, centroOrigem.getId(), centroDestinoId);
+        transferenciaRepository.save(transferencia);
+
+        System.out.println("Transferência realizada com sucesso.");
+    }
+
 
     private static void listarTransferencias() {
-        System.out.println("\n--- Listar Transferências ---");
-        List<Transferencia> transferencias = transferenciaRepository.findAll();
-        for (Transferencia transferencia : transferencias) {
+        for (Transferencia transferencia : transferenciaRepository.findAll()) {
             System.out.println(transferencia);
         }
     }

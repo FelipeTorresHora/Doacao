@@ -1,60 +1,61 @@
 package model;
 
+import Enums.Tipo;
+
 import java.util.List;
 
 public class Transferencia {
+    private Tipo tipo;
+    private int quantidade;
+    private int centroOrigemId;
+    private int centroDestinoId;
 
-    private int id;
-    private int origemId;
-    private int destinoId;
-    private String descricaoItens;
-
-    public Transferencia(int id, int origemId, int destinoId, String descricaoItens) {
-        this.id = id;
-        this.origemId = origemId;
-        this.destinoId = destinoId;
-        this.descricaoItens = descricaoItens;
+    public Transferencia(Tipo tipo, int quantidade, int centroOrigemId, int centroDestinoId) {
+        this.tipo = tipo;
+        this.quantidade = quantidade;
+        this.centroOrigemId = centroOrigemId;
+        this.centroDestinoId = centroDestinoId;
     }
 
-    public int getId() {
-        return id;
+    public Tipo getTipo() {
+        return tipo;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
     }
 
-    public int getOrigemId() {
-        return origemId;
+    public int getQuantidade() {
+        return quantidade;
     }
 
-    public void setOrigemId(int origemId) {
-        this.origemId = origemId;
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 
-    public int getDestinoId() {
-        return destinoId;
+    public int getCentroOrigemId() {
+        return centroOrigemId;
     }
 
-    public void setDestinoId(int destinoId) {
-        this.destinoId = destinoId;
+    public void setCentroOrigemId(int centroOrigemId) {
+        this.centroOrigemId = centroOrigemId;
     }
 
-    public String getDescricaoItens() {
-        return descricaoItens;
+    public int getCentroDestinoId() {
+        return centroDestinoId;
     }
 
-    public void setDescricaoItens(String descricaoItens) {
-        this.descricaoItens = descricaoItens;
+    public void setCentroDestinoId(int centroDestinoId) {
+        this.centroDestinoId = centroDestinoId;
     }
 
     @Override
     public String toString() {
         return "Transferencia{" +
-                "id=" + id +
-                ", origemId=" + origemId +
-                ", destinoId=" + destinoId +
-                ", descricaoItens='" + descricaoItens + '\'' +
+                "tipo=" + tipo +
+                ", quantidade=" + quantidade +
+                ", centroOrigemId=" + centroOrigemId +
+                ", centroDestinoId=" + centroDestinoId +
                 '}';
     }
 }

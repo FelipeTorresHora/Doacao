@@ -2,8 +2,6 @@ package model;
 
 import Enums.Tipo;
 
-import java.util.List;
-
 public class Transferencia {
     private Tipo tipo;
     private int quantidade;

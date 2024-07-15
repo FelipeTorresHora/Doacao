@@ -3,7 +3,6 @@ package model;
 import Enums.Tipo;
 
 import java.util.Date;
-import java.util.List;
 
 public class OrdemPedido {
     private int id;
@@ -19,8 +18,6 @@ public class OrdemPedido {
         this.quantidade = quantidade;
         this.dataPedido = new Date();
     }
-
-    // Getters e setters
 
     public int getId() {
         return id;

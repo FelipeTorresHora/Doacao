@@ -50,6 +50,7 @@ public class CentroDistribuicao {
     public int getQuantidadeDisponivel(Tipo tipo) {
         return quantidadeDisponivel.get(tipo);
     }
+
     public void adicionarItens(Tipo tipo, int quantidade) {
         int atual = quantidadeDisponivel.get(tipo);
         quantidadeDisponivel.put(tipo, atual + quantidade);
@@ -80,6 +81,7 @@ public class CentroDistribuicao {
         quantidadeDisponivel.put(ordemPedido.getTipo(), quantidadeAtual - ordemPedido.getQuantidade());
         abrigo.adicionarPedido(ordemPedido);
     }
+
 
     @Override
     public String toString() {

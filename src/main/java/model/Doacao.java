@@ -7,7 +7,8 @@ import Enums.UnidadeMedida;
 
 public class Doacao {
 
-    private int id;
+    public Object adicionarDoacao;
+    private int idDoacao;
     private String descricao;
     private Tipo tipo;
     private Genero genero;
@@ -15,12 +16,11 @@ public class Doacao {
     private int quantidade;
     private UnidadeMedida unidadeMedida;
     private String validade;
-    private CentroDistribuicao centroDistribuicao;
+    private int centroDistribuicaoId;
 
     public Doacao(){
     }
-
-    public Doacao(Tipo tipo, String descricao, Genero genero, Tamanho tamanho, UnidadeMedida unidadeMedida, int quantidade, String validade) {
+    public Doacao(Tipo tipo,String descricao,Genero genero, Tamanho tamanho, UnidadeMedida unidadeMedida, int quantidade, String validade, int centroDistribuicaoId, int idDoacao) {
         this.descricao = descricao;
         this.tipo = tipo;
         this.genero = genero;
@@ -28,14 +28,16 @@ public class Doacao {
         this.quantidade = quantidade;
         this.unidadeMedida = unidadeMedida;
         this.validade = validade;
+        this.centroDistribuicaoId = centroDistribuicaoId;
+        this.idDoacao = idDoacao;
     }
 
-    public int getId() {
-        return id;
+    public int getIdDoacao() {
+        return idDoacao;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdDoacao(int idDoacao) {
+        this.idDoacao = idDoacao;
     }
 
     public String getDescricao() {
@@ -94,29 +96,28 @@ public class Doacao {
         this.validade = validade;
     }
 
-    public CentroDistribuicao getCentroDistribuicao() {
-        return centroDistribuicao;
+    public int getCentroDistribuicaoId() {
+        return centroDistribuicaoId;
     }
 
-    public void setCentroDistribuicao(CentroDistribuicao centroDistribuicao) {
-        this.centroDistribuicao = centroDistribuicao;
+    public void setCentroDistribuicaoId(int centroDistribuicaoId) {
+        this.centroDistribuicaoId = centroDistribuicaoId;
     }
 
     @Override
     public String toString() {
         return "Doacao{" +
-                "id=" + id +
+                "id=" + idDoacao +
                 ", descricao='" + descricao + '\'' +
                 ", tipo=" + tipo +
                 ", genero=" + genero +
                 ", tamanho=" + tamanho +
                 ", quantidade=" + quantidade +
                 ", unidadeMedida=" + unidadeMedida +
-                ", validade='" + validade + '\'' +
-                ", centroDistribuicao=" + centroDistribuicao +
+                ", validade=" + validade +
+                ", centroDistribuicaoId=" + centroDistribuicaoId +
                 '}';
     }
 
-    public void setCentroDistribuicaoId(int centroId) {
-    }
+
 }

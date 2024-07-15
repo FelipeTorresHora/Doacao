@@ -6,6 +6,7 @@ import model.CentroDistribuicao;
 import model.Doacao;
 import model.OrdemPedido;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,22 +46,20 @@ public class CentroDistribuicaoRepository {
     }
 
     public boolean podeAdicionarDoacao(CentroDistribuicao centro, Doacao doacao) {
-        // Verificar capacidade do centro de distribuição
         return centro.podeAdicionarDoacao(doacao);
     }
 
     public void adicionarDoacao(CentroDistribuicao centro, Doacao doacao) {
-        // Adicionar doação ao centro de distribuição
         centro.adicionarDoacao(doacao);
     }
 
     public boolean podeTransferirParaAbrigo(CentroDistribuicao centro, Abrigo abrigo, OrdemPedido ordemPedido) {
-        // Verificar se a quantidade pode ser transferida para o abrigo
         return centro.podeTransferirParaAbrigo(abrigo, ordemPedido);
     }
 
     public void transferirParaAbrigo(CentroDistribuicao centro, Abrigo abrigo, OrdemPedido ordemPedido) {
-        // Transferir quantidade do centro de distribuição para o abrigo
         centro.transferirParaAbrigo(abrigo, ordemPedido);
     }
+
+
 }

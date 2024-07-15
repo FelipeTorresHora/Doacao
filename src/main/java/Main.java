@@ -2,6 +2,7 @@ import model.*;
 import repository.*;
 import Enums.*;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class Main {
     private static DoacaoRepository doacaoRepository = new DoacaoRepository();
     private static OrdemPedidoRepository ordemPedidoRepository = new OrdemPedidoRepository();
     private static TransferenciaRepository transferenciaRepository = new TransferenciaRepository();
+    private static CsvImporter csvImporter = new CsvImporter(doacaoRepository, centroDistribuicaoRepository);
 
     public static void main(String[] args) {
         while (true) {
@@ -68,7 +70,7 @@ public class Main {
                     listarTransferencias();
                     break;
                 case 12:
-                    importarDadosCSV();
+                    importarCsv();
                     break;
                 case 0:
                     System.out.println("Finalizando a aplicação!");
@@ -110,7 +112,7 @@ public class Main {
         System.out.println("\n--- Deletar Abrigo ---");
         System.out.print("ID do Abrigo: ");
         int id = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        scanner.nextLine();
         abrigoRepository.delete(id);
         System.out.println("Abrigo deletado com sucesso!");
     }
@@ -124,77 +126,76 @@ public class Main {
     }
 
     private static void criarDoacao() {
-        System.out.println("\n--- Criar Doação ---");
-        System.out.print("Tipo (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
-        Tipo tipo = Tipo.valueOf(scanner.nextLine().toUpperCase());
-        System.out.print("Descrição: ");
+        System.out.println("Digite o tipo de doação (ROUPA, PRODUTO_HIGIENE, ALIMENTO): ");
+        String tipoStr = scanner.nextLine();
+        Tipo tipo = Tipo.valueOf(tipoStr.toUpperCase());
+
+        System.out.println("Digite a descrição: ");
         String descricao = scanner.nextLine();
 
-        Genero genero = null;
-        Tamanho tamanho = null;
-        UnidadeMedida unidadeMedida = null;
-        String validade = null;
-
-        if (tipo == Tipo.ROUPA) {
-            System.out.print("Gênero (MASCULINO, FEMININO): ");
-            genero = Genero.valueOf(scanner.nextLine().toUpperCase());
-            System.out.print("Tamanho (INFANTIL, PP, P, M, G, GG): ");
-            tamanho = Tamanho.valueOf(scanner.nextLine().toUpperCase());
-        } else if (tipo == Tipo.PRODUTO_HIGIENE || tipo == Tipo.ALIMENTO) {
-            System.out.print("Unidade de Medida (QUILO, GRAMAS, LITRO): ");
-            unidadeMedida = UnidadeMedida.valueOf(scanner.nextLine().toUpperCase());
-            System.out.print("Validade: ");
-            validade = scanner.nextLine();
-        }
-
-        System.out.print("Quantidade: ");
+        System.out.println("Digite a quantidade: ");
         int quantidade = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.print("ID do Centro de Distribuição: ");
-        int centroId = scanner.nextInt();
+        System.out.println("Digite a unidade de medida (QUILO, GRAMAS, LITRO) ou deixe em branco: ");
+        String unidadeStr = scanner.nextLine();
+        UnidadeMedida unidadeMedida = unidadeStr.isEmpty() ? null : UnidadeMedida.valueOf(unidadeStr.toUpperCase());
+
+        System.out.println("Digite a validade (yyyy-MM-dd) ou deixe em branco: ");
+        String validadeStr = scanner.nextLine();
+        String validade = validadeStr.isEmpty() ? null : String.valueOf(LocalDate.parse(validadeStr));
+
+        System.out.println("Digite o gênero (MASCULINO, FEMININO) ou deixe em branco: ");
+        String generoStr = scanner.nextLine();
+        Genero genero = generoStr.isEmpty() ? null : Genero.valueOf(generoStr.toUpperCase());
+
+        System.out.println("Digite o tamanho (INFANTIL, PP, P, M, G, GG) ou deixe em branco: ");
+        String tamanhoStr = scanner.nextLine();
+        Tamanho tamanho = tamanhoStr.isEmpty() ? null : Tamanho.valueOf(tamanhoStr.toUpperCase());
+
+        System.out.println("Digite o ID do centro de distribuição: ");
+        int centroDistribuicaoId = scanner.nextInt();
         scanner.nextLine();
-        CentroDistribuicao centro = centroDistribuicaoRepository.findById(centroId);
+        CentroDistribuicao centro = centroDistribuicaoRepository.findById(centroDistribuicaoId);
 
-        if (centro == null) {
-            System.out.println("Centro de distribuição não encontrado.");
-            return;
-        }
+        System.out.print("IdDoacao: ");
+        int idDoacao = scanner.nextInt();
+        scanner.nextLine();
 
-        Doacao doacao = new Doacao(tipo, descricao, genero, tamanho, unidadeMedida, quantidade, validade);
-        doacao.setCentroDistribuicaoId(centroId);
+        Doacao doacao = new Doacao(tipo, descricao, genero, tamanho, unidadeMedida, quantidade, validade,centroDistribuicaoId,idDoacao);
+        doacao.setCentroDistribuicaoId(centroDistribuicaoId);
 
         if (!centroDistribuicaoRepository.podeAdicionarDoacao(centro, doacao)) {
             System.out.println("Capacidade do centro de distribuição excedida para este tipo de item.");
             return;
         }
 
+
         centroDistribuicaoRepository.adicionarDoacao(centro, doacao);
         doacaoRepository.save(doacao);
+        doacaoRepository.adicionarDoacao(doacao);
         System.out.println("Doação criada com sucesso!");
     }
+
     private static void listarDoacoes() {
-        System.out.println("\n--- Listar Doações ---");
-        List<Doacao> doacoes = doacaoRepository.findAll();
+        List<Doacao> doacoes = doacaoRepository.listarDoacoes();
         for (Doacao doacao : doacoes) {
             System.out.println(doacao);
         }
     }
 
     private static void deletarDoacoes() {
-        System.out.println("\n--- Deletar Doações ---");
-        System.out.print("ID da Doação: ");
-        int id = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
-        doacaoRepository.delete(id);
+        System.out.println("Digite o ID da doação a ser deletada: ");
+        int idDoacao = scanner.nextInt();
+        scanner.nextLine();
+        doacaoRepository.deletarDoacao(idDoacao);
         System.out.println("Doação deletada com sucesso!");
     }
-
     private static void adicionarOrdemPedido() {
         System.out.println("\n--- Adicionar Ordem de Pedido ---");
         System.out.print("ID do Abrigo: ");
         int abrigoId = scanner.nextInt();
-        scanner.nextLine();  // Consumir nova linha
+        scanner.nextLine();
 
         Abrigo abrigo = abrigoRepository.findById(abrigoId);
         if (abrigo == null) {
@@ -209,7 +210,7 @@ public class Main {
 
         System.out.print("Quantidade: ");
         int quantidade = scanner.nextInt();
-        scanner.nextLine();  // Consumir nova linha
+        scanner.nextLine();
 
         OrdemPedido ordemPedido = new OrdemPedido(tipo, descricao, quantidade);
         abrigoRepository.adicionarOrdemPedido(abrigo, ordemPedido);
@@ -222,10 +223,10 @@ public class Main {
         }
 
         System.out.println("Centro de Distribuição selecionado: " + centroSelecionado.getNome() + " com " + centroSelecionado.getQuantidadeDisponivel(tipo) + " unidades disponíveis.");
-        System.out.print("Deseja confirmar o envio? (S/N): ");
+        System.out.print("Deseja confirmar o envio? (SIM/NAO): ");
         String confirmacao = scanner.nextLine().toUpperCase();
 
-        if (confirmacao.equals("S")) {
+        if (confirmacao.equals("SIM")) {
             if (!centroDistribuicaoRepository.podeTransferirParaAbrigo(centroSelecionado, abrigo, ordemPedido)) {
                 System.out.println("Capacidade do abrigo excedida para este tipo de item.");
                 return;
@@ -234,7 +235,9 @@ public class Main {
             centroDistribuicaoRepository.transferirParaAbrigo(centroSelecionado, abrigo, ordemPedido);
             System.out.println("Pedido enviado com sucesso!");
         } else {
-            System.out.println("Envio cancelado.");
+            System.out.print("Digite o motivo da recusa: ");
+            String motivop = scanner.nextLine();
+            System.out.println("Envio cancelado por " +motivop);
         }
     }
 
@@ -259,11 +262,15 @@ public class Main {
         }
 
         System.out.println("Centro de Origem: " + centroOrigem.getNome());
-        System.out.print("Confirmar transferência? (sim/não): ");
-        String confirmacao = scanner.nextLine();
-        if (!confirmacao.equalsIgnoreCase("sim")) {
+        System.out.print("Confirmar transferência? (SIM/NAO): ");
+        String confirmacao = scanner.nextLine().toUpperCase();
+        if (!confirmacao.equalsIgnoreCase("SIM")) {
             System.out.println("Transferência cancelada.");
             return;
+        } else {
+            System.out.print("Digite o motivo da recusa: ");
+            String motivot = scanner.nextLine();
+            System.out.println("Transferencia cancelado por: " +motivot);
         }
 
         System.out.print("ID do Centro de Destino: ");
@@ -296,11 +303,9 @@ public class Main {
         }
     }
 
-    private static void importarDadosCSV() {
-        System.out.println("\n--- Importar Dados CSV ---");
-        System.out.print("Caminho do Arquivo CSV: ");
-        String filePath = scanner.nextLine();
-        doacaoRepository.importFromCsv(filePath);
-        System.out.println("Dados importados com sucesso!");
+    private static void importarCsv() {
+        String filePath = "C:\\Users\\Felipe\\Downloads\\doacoes.xlsx";
+        csvImporter.importarCsv(filePath);
+        System.out.println("Importação de doações concluída com sucesso.");
     }
 }

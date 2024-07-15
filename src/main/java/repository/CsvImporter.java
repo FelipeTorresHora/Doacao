@@ -1,42 +1,67 @@
 package repository;
 
+import Enums.*;
+
+import model.CentroDistribuicao;
+import model.Doacao;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class CsvImporter {
+    private DoacaoRepository doacaoRepository;
+    private CentroDistribuicaoRepository centroDistribuicaoRepository;
 
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/Doacao";
-    private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "12345678";
+    public CsvImporter(DoacaoRepository doacaoRepository, CentroDistribuicaoRepository centroDistribuicaoRepository) {
+        this.doacaoRepository = doacaoRepository;
+        this.centroDistribuicaoRepository = centroDistribuicaoRepository;
+    }
 
-    public void importCsv(String csvFilePath) {
-        String line;
-        String csvSplitBy = ",";
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath));
-             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Doacao", "root", "12345678")) {
-
-            String query = "INSERT INTO tabela_doacao (descricao, genero, tamanho, tipo, quantidade, unidade_medida) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
+    public void importarCsv(String filepath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
+            String line;
+            boolean isFirstLine = true;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(csvSplitBy);
+                if (isFirstLine && line.startsWith("tipo")) {
+                    isFirstLine = false;
+                    continue;
+                }
 
-                preparedStatement.setString(1, data[0]); // Descrição
-                preparedStatement.setString(2, data[1]); // Gênero
-                preparedStatement.setString(3, data[2]); // Tamanho
-                preparedStatement.setString(4, data[3]); // Tipo
-                preparedStatement.setInt(5, Integer.parseInt(data[4])); // Quantidade
-                preparedStatement.setString(6, data[5]); // Unidade de Medida
+                String[] values = line.split(",");
 
-                preparedStatement.addBatch();
+                Tipo tipo = Tipo.valueOf(values[0].toUpperCase());
+                String descricao = values[1];
+                int quantidade = Integer.parseInt(values[2]);
+                UnidadeMedida unidadeMedida = values[3].isEmpty() ? null : UnidadeMedida.valueOf(values[3].toUpperCase());
+                String validadeStr = values[4];
+                String validade = validadeStr.isEmpty() ? null : String.valueOf(new SimpleDateFormat("yyyy-MM-dd").parse(validadeStr));
+                Genero genero = values[5].isEmpty() ? null : Genero.valueOf(values[5].toUpperCase());
+                Tamanho tamanho = values[6].isEmpty() ? null : Tamanho.valueOf(values[6].toUpperCase());
+                int centroDistribuicaoId = Integer.parseInt(values[7]);
+                int idDoacao = Integer.parseInt(values[8]);
+
+                CentroDistribuicao centro = centroDistribuicaoRepository.findById(centroDistribuicaoId);
+
+                if (centro == null) {
+                    System.out.println("Centro de distribuição não encontrado.");
+                    continue;
+                }
+
+                Doacao doacao = new Doacao(tipo, descricao, genero, tamanho, unidadeMedida, quantidade, validade, centroDistribuicaoId, idDoacao);
+                doacao.setCentroDistribuicaoId(centroDistribuicaoId);
+
+                if (!centroDistribuicaoRepository.podeAdicionarDoacao(centro, doacao)) {
+                    System.out.println("Capacidade do centro de distribuição excedida para este tipo de item.");
+                    continue;
+                }
+
+                centroDistribuicaoRepository.adicionarDoacao(centro, doacao);
+                doacaoRepository.save(doacao);
+                doacaoRepository.adicionarDoacao(doacao);
             }
-
-            preparedStatement.executeBatch();
-
-        } catch (Exception e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }

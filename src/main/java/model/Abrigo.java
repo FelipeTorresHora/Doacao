@@ -25,8 +25,6 @@ public class Abrigo {
         this.ordensPedido = new ArrayList<>();
     }
 
-    // Getters e setters
-
     public int getId() {
         return id;
     }
